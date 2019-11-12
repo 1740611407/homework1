@@ -1,0 +1,142 @@
+xiaofeijilu.java
+
+package view;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import static javax.swing.BorderFactory.createTitledBorder;
+import java.util.List;
+
+import javax.swing.border.TitledBorder;
+
+import javax.swing.table.DefaultTableCellRenderer;
+
+import dao.Bookdao;
+import dao.Borrowdao;
+import model.Borrow;
+import model.User;
+import util.borrowTable;
+
+
+
+public class jieshujilu extends JPanel {
+	
+	private static final long serialVersionUID = 1L;
+	private JPanel message;
+	private JTextField snoTextField;
+	private JTable table;
+	private JTextField nameTextField;
+	Bookdao bookdao = new Bookdao();
+	Borrowdao borrowdao=new Borrowdao();
+	borrowTable model = new borrowTable();
+	String id;
+	String bookname;
+	
+	
+	public  jieshujilu() {
+		
+	}
+	public JPanel getmessage(User user) throws Exception {
+		message = new JPanel();
+		message.setBorder(createTitledBorder(null, "消费记录",
+				TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.TOP, new Font(
+						"sansserif", Font.BOLD, 12), new Color(59, 59, 59)));
+		message.setBackground(new Color(71,201,223));
+		message.setBounds(0, 40, 500, 370);
+		message.setLayout(null);
+		
+
+		JLabel nameLlabel = new JLabel("学生账号");
+		nameLlabel.setBounds(195, 34, 80, 15);
+		message.add(nameLlabel);
+
+		nameTextField = new JTextField();
+		nameTextField.setBounds(250, 31, 97, 20);
+		message.add(nameTextField);
+		nameTextField.setColumns(10);
+
+		JButton findButton = new JButton("搜索消费详情");
+		findButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				model.setRowCount(0);
+				id = snoTextField.getText();
+				bookname = nameTextField.getText();				
+				if((id.equals("")) && (bookname.equals(""))){					
+					JOptionPane.showMessageDialog(getParent(), "请填写查询条件！",
+							"信息提示框", JOptionPane.INFORMATION_MESSAGE);
+					return;					
+				}
+				
+				if((!id.equals(""))&&(bookname.equals(""))){
+					List<Borrow>  list = borrowdao.selectScoreBySno(bookname);
+					for(int i =0;i<list.size();i++){
+						Borrow borrow= (Borrow)list.get(i);
+						 model.addRow(new Object[] { 
+								 borrow.getsno(),
+								 borrow.getbno(),
+								 borrow.getfakuan(),
+								 borrow.getborrowerdate(),
+								 borrow.getreturndate()});
+					}
+				}
+				
+				if((id.equals(""))&&(!bookname.equals(""))){
+					List<Borrow>  list = borrowdao.selectScoreByCno(bookname);
+					for(int i =0;i<list.size();i++){
+						Borrow borrow= (Borrow)list.get(i);
+						 model.addRow(new Object[] { 
+								 borrow.getsno(),
+								 borrow.getbno(),
+								 borrow.getfakuan(),
+								 borrow.getborrowerdate(),
+								 borrow.getreturndate()});
+					}
+				} 
+				
+				if((!id.equals("")) && (!bookname.equals(""))){
+					Borrow borrow = borrowdao.selectScoreBySnoCno(id,bookname);
+					
+					 model.addRow(new Object[] { 
+							 borrow.getsno(),
+							 borrow.getbno(),
+							 borrow.getfakuan(),
+							 borrow.getborrowerdate(),
+							 borrow.getreturndate()});
+					
+				}
+			}}
+		);
+		findButton.setBounds(353, 30, 65, 23);
+		message.add(findButton);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(10, 60, 480, 200);
+		message.add(scrollPane_2);
+		  
+		table = new JTable(model);
+		DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
+		tcr.setHorizontalAlignment(SwingConstants.CENTER);
+		tcr.setVerticalAlignment(JLabel.CENTER);
+		table.setDefaultRenderer(Object.class, tcr);  
+		repaint();
+		List<Borrow>  list =borrowdao.selectScore();
+		model.setRowCount(0);
+		for (int i = 0; i < list.size(); i++) {
+			Borrow borrow = (Borrow)list.get(i);
+			 model.addRow(new Object[] { 
+					 borrow.getsno(),
+					 borrow.getbno(),
+					 borrow.getfakuan(),
+					 borrow.getborrowerdate(),
+					 borrow.getreturndate()});
+		}
+		scrollPane_2.setViewportView(table);
+	    return message;
+
+	}
+
+}
