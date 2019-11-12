@@ -1,0 +1,175 @@
+tianjiauser.java
+
+package view;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import static javax.swing.BorderFactory.createTitledBorder;
+
+import javax.swing.border.TitledBorder;
+
+
+import dao.Userdao;
+import model.User;
+import util.获取随机不重复用户ID;
+
+
+
+public class tianjiauser extends JPanel {
+	/**
+	 * 
+	 */
+	private JPanel message;
+	private JLabel snoLabel,snameLabel,sexLabel,ageLabel,deptLabel,deptLabel1,deptLabel2;
+	private JTextField snoText,snameText,sexText,ageText,deptText,deptText1;
+	private JButton insertstu,buttonReset;
+	private JLabel start1,start2;
+	User user=new User();
+	Userdao userdao=new Userdao();
+	@SuppressWarnings("rawtypes")
+	JComboBox comboBox;
+	/**
+	 * Create the panel.
+	 * @return 
+	 */
+	public  tianjiauser() {
+		
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public JPanel getmessage() throws Exception {
+		message = new JPanel();
+		message.setBorder(createTitledBorder(null, "注册用户",
+				TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.TOP, new Font(
+						"sansserif", Font.BOLD, 12), new Color(59, 59, 59)));
+		message.setBackground(new Color(71,201,223));
+		message.setBounds(0, 40, 500, 370);
+		message.setLayout(null);
+		  
+		setLayout(null);
+		
+		snoLabel = new JLabel("账号");
+		snoLabel.setBounds(49, 20, 72, 15);
+		message.add(snoLabel);
+		snoText = new JTextField(newid.getId());
+		snoText.setBounds(90, 20, 100, 20);
+		message.add(snoText);
+		snoText.setEditable(false);
+		snoText.setColumns(12);
+		
+
+		snameLabel = new JLabel("密码");
+		snameLabel.setBounds(230, 20, 72, 15);
+		message.add(snameLabel);
+
+		snameText = new JTextField();
+		snameText.setColumns(10);
+		snameText.setBounds(285, 20, 100, 20);
+		message.add(snameText);
+		start2=new JLabel("*");
+		start2.setForeground(Color.red);
+		start2.setBounds(390,23,20,20);
+		message.add(start2);
+
+		sexLabel = new JLabel("姓名");
+		sexLabel.setBounds(49, 65, 72, 15);
+		message.add(sexLabel);
+		start1=new JLabel("*");
+		start1.setForeground(Color.red);
+		start1.setBounds(200,68,20,20);
+		message.add(start1);
+		sexText = new JTextField();
+		sexText.setColumns(10);
+		sexText.setBounds(90, 65, 100, 20);
+		message.add(sexText);
+		
+		ageLabel = new JLabel("性别");
+		ageLabel.setBounds(230, 65, 72, 15);
+		message.add(ageLabel);
+
+		ageText = new JTextField();
+		ageText.setColumns(10);
+		ageText.setBounds(285, 65, 100, 20);
+		message.add(ageText);
+		
+		deptLabel = new JLabel("年龄");
+		deptLabel.setBounds(49, 155, 72, 15);
+		message.add(deptLabel);
+
+		deptText = new JTextField();
+		deptText.setColumns(10);
+		deptText.setBounds(90, 155, 100, 20);
+		message.add(deptText);
+		
+		deptLabel1 = new JLabel("职业");
+		deptLabel1.setBounds(49, 110, 72, 15);
+		message.add(deptLabel1);
+		
+		deptText1 = new JTextField();
+		deptText1.setColumns(10);
+		deptText1.setBounds(90, 110, 100, 20);
+		message.add(deptText1);
+		
+		String[] ids = new String[]{"普通用户","管理员"};
+		comboBox = new JComboBox(ids);
+		deptLabel2 = new JLabel("身份");
+		deptLabel2.setBounds(230, 110, 72, 15);
+		message.add(deptLabel2);
+		comboBox.setBounds(285, 110, 100, 20);
+		message.add(comboBox);
+		
+		insertstu=new JButton("添加");
+		insertstu.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				User user=new User();
+				if(sexText.getText().equals("")||snameText.getText().equals("")){
+					JOptionPane.showMessageDialog(getParent(), "密码、姓名必填！",
+					   		"信息提示框", JOptionPane.INFORMATION_MESSAGE);
+				    return;
+				}
+				else{
+					
+					user.setid(snoText.getText());
+					user.setpassword(snameText.getText());
+					user.setusername(sexText.getText());
+					user.setsex(ageText.getText());
+					if(deptText.getText().equals("")) {
+						user.setage(null);
+					}else {
+					user.setage(Long.parseLong(deptText.getText()));
+					}
+					user.setzhiye(deptText1.getText());
+					user.setshenfen((String) comboBox.getSelectedItem());
+					user.setborrowbook(0);
+					try {
+						userdao.insertStudent(user);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				    JOptionPane.showMessageDialog(getParent(), "用户注册成功！",
+				   		"信息提示框", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+		buttonReset=new JButton("重置");
+		buttonReset.setBounds(300,200,80,25);
+		message.add(buttonReset);
+		buttonReset.addActionListener(new ActionListener() {	
+			public void actionPerformed(ActionEvent e) {
+				snameText.setText("");
+				sexText.setText("");
+				ageText.setText("");
+				deptText.setText("");
+				deptText1.setText("");
+			}
+		});
+		insertstu.setBounds(90, 200, 80, 25);
+		message.add(insertstu);
+	    return message;
+
+	}
+
+}
