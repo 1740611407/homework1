@@ -1,0 +1,203 @@
+Userdao.java
+
+
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import model.User;
+import util.DBUtil;
+
+public class Userdao {
+	  
+			
+	 DBUtil connection = new DBUtil();
+	    Connection conn = null;
+		
+	    public void insertStudent(User user) {
+				conn = DBUtil.getConnection();
+				try {
+					PreparedStatement statement = conn
+							.prepareStatement("insert into tb_user values(?,?,?,?,?,?,?,?)");
+					statement.setString(1, user.getid());
+					statement.setString(2, user.getpassword());
+					statement.setString(3, user.getusername());
+					statement.setString(4, user.getsex());
+					if(user.getage().equals(null)) {
+						statement.setLong(5,0);
+					}else {
+					statement.setLong(5,user.getage());
+					}
+					statement.setString(6,user.getzhiye());
+					statement.setString(7,user.getshenfen());
+					statement.setInt(8,user.getborrowbook());
+					
+					statement.executeUpdate();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			
+	    public List<User> query() throws Exception{	       
+			Connection con = DBUtil.getConnection();	        
+			Statement stmt = con.createStatement();	       
+			ResultSet rs = stmt.executeQuery("select id,password,username,sex,age,zhiye,shenfen,borrowbook from tb_user");	      
+			List<User> userList = new ArrayList<User>();	       
+			User user = null;	     
+			
+			while (rs.next()){	           
+				user = new User();	           
+				user.setid(rs.getString("id"));	       
+				user.setusername(rs.getString("username"));
+				user.setsex(rs.getString("sex"));
+				user.setage(rs.getLong("age"));
+				user.setzhiye(rs.getString("zhiye"));
+				user.setshenfen(rs.getString("shenfen"));
+				user.setborrowbook(rs.getInt("borrowbook"));
+				user.setpassword(rs.getString("password"));
+				userList.add(user);	        
+			}	       
+			return userList;	  
+		}
+			
+			public User selectStudentBySno(String id) {
+				User user = new User();
+				conn = DBUtil.getConnection();
+				try {
+					Statement statement = conn.createStatement();
+					String sql = "select * from tb_user where id = '" + id+ "'";
+					ResultSet rest = statement.executeQuery(sql);
+					while (rest.next()) {
+						user.setid(rest.getString("id"));	       
+						user.setusername(rest.getString("username"));
+						user.setsex(rest.getString("sex"));
+						user.setage(rest.getLong("age"));
+						user.setzhiye(rest.getString("zhiye"));
+						user.setshenfen(rest.getString("shenfen"));
+						user.setborrowbook(rest.getInt("borrowbook"));
+						user.setpassword(rest.getString("password"));
+					
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				return user;
+			}
+
+			// 定义按姓名查询学生方法
+			public List<User> selectStudentBySname(String username) {
+				
+				conn = DBUtil.getConnection();
+				List<User> list = new ArrayList<User>();
+				try {
+					Statement statement = conn.createStatement();
+					String sql = "select * from tb_user where username = '" + username +"'";
+					ResultSet rest = statement.executeQuery(sql);			
+					while (rest.next()) {
+						User user = new User();
+						user.setid(rest.getString("id"));	       
+						user.setusername(rest.getString("username"));
+						user.setsex(rest.getString("sex"));
+						user.setage(rest.getLong("age"));
+						user.setzhiye(rest.getString("zhiye"));
+						user.setshenfen(rest.getString("shenfen"));
+						user.setborrowbook(rest.getInt("borrowbook"));
+						user.setpassword(rest.getString("password"));
+						
+						list.add(user);
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				return list;
+			}
+
+			
+		
+			public User selectStudentBySnoSname(String id, String username) {
+				User user = new User();
+				conn = DBUtil.getConnection();
+				try {
+					Statement statement = conn.createStatement();
+					String sql = "select * from tb_user where id = '" + id+ "' and username = '" + username+ "'";
+					ResultSet rest = statement.executeQuery(sql);
+					while (rest.next()) {
+						user.setid(rest.getString("id"));	       
+						user.setusername(rest.getString("username"));
+						user.setsex(rest.getString("sex"));
+						user.setage(rest.getLong("age"));
+						user.setzhiye(rest.getString("zhiye"));
+						user.setshenfen(rest.getString("shenfen"));
+						user.setborrowbook(rest.getInt("borrowbook"));
+						user.setpassword(rest.getString("password"));
+					
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				return user;
+			}
+
+		
+			public void updateStudent(User user) {
+				conn = DBUtil.getConnection();
+				
+				try {
+					String sql = "update tb_user set username = ?,sex = ?,age=?,zhiye=?,password=? where id =?";
+					PreparedStatement statement = conn.prepareStatement(sql);
+					statement.setString(1, user.getusername());
+					statement.setString(2, user.getsex());
+					statement.setLong(3, user.getage());
+					statement.setString(4, user.getzhiye());
+					statement.setString(5, user.getpassword());
+					statement.setString(6, user.getid());
+					
+					statement.executeUpdate();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		
+						public void updateStudent1(User user) {
+							conn = DBUtil.getConnection();
+							
+							try {
+								String sql = "update tb_user set username = ?,sex = ?,age=?,zhiye=?,password=?,borrowbook=?  where id =?";
+								PreparedStatement statement = conn.prepareStatement(sql);
+								statement.setString(1, user.getusername());
+								statement.setString(2, user.getsex());
+								statement.setLong(3, user.getage());
+								statement.setString(4, user.getzhiye());
+								statement.setString(5, user.getpassword());
+								statement.setInt(6, user.getborrowbook());
+								statement.setString(7, user.getid());
+								
+								statement.executeUpdate();
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}
+						}
+
+		
+			public void deleteStudent(String id){
+				conn = DBUtil.getConnection();
+				String sql = "delete from tb_user where id = '" + id+ "'";
+				try {
+					Statement statement = conn.createStatement();
+					statement.executeUpdate(sql);
+				} catch (SQLException e) {			
+					e.printStackTrace();
+				}
+			
+	}
+
+
+}
